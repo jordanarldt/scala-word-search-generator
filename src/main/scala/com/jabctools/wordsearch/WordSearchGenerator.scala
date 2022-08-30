@@ -17,10 +17,13 @@ object WordSearchGenerator {
     if (tryAgain) {
       promptGeneration(words, searchSize)
     } else {
+      print(s"${Console.BLUE}What do you want to name the search? (optional): ${Console.RESET}")
+      val searchName = io.StdIn.readLine()
       HtmlGenerator.writeHTMLFiles(
         wordMatrix.getPlacedWords,
         wordMatrix.getMatrix,
-        wordMatrix.getMatrixAnswers
+        wordMatrix.getMatrixAnswers,
+        searchName
       )
     }
   }

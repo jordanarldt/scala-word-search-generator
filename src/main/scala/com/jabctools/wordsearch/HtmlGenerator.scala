@@ -33,7 +33,6 @@ object HtmlGenerator {
     writer.close()
   }
 
-
   private def htmlHead(id: Int): String = {
     s"""
        |<!DOCTYPE html>
@@ -112,10 +111,11 @@ object HtmlGenerator {
   }
 
   private def htmlContent(
-    id: Int,
-    timestamp: String,
-    words: List[String],
-    matrix: Array[Array[Char]]
+      id: Int,
+      timestamp: String,
+      words: List[String],
+      matrix: Array[Array[Char]],
+      searchName: String
   ): String = {
     val rowsHtml = matrix.map { row =>
       val cells = row
@@ -127,10 +127,11 @@ object HtmlGenerator {
     }.mkString
 
     val wordsHtml = words.map(word => s"""<li>$word</li>""").mkString("\n")
+    val searchNameHtml = if (searchName.nonEmpty) s"($searchName)" else ""
 
     s"""
        |<body>
-       |<h1>Word Search #$id</h1>
+       |<h1>Word Search #$id $searchNameHtml</h1>
        |<span class="createdAt">$timestamp</span>
        |<div class="grid">
        |$rowsHtml
@@ -146,21 +147,22 @@ object HtmlGenerator {
   }
 
   def writeHTMLFiles(
-    words: List[String],
-    matrix: Array[Array[Char]],
-    matrixAnswers: Array[Array[Char]]
+      words: List[String],
+      matrix: Array[Array[Char]],
+      matrixAnswers: Array[Array[Char]],
+      searchName: String
   ): Unit = {
     val counter = getCounter
     val timestamp = new Date().toString
 
     val wordSearchWriter = new PrintWriter(new File(s"html/wordsearch-$counter.html"))
     wordSearchWriter.print(htmlHead(counter))
-    wordSearchWriter.print(htmlContent(counter, timestamp, words, matrix))
+    wordSearchWriter.print(htmlContent(counter, timestamp, words, matrix, searchName))
     wordSearchWriter.close()
 
     val answerWriter = new PrintWriter(new File(s"html/wordsearch-$counter-answers.html"))
     answerWriter.print(htmlHead(counter))
-    answerWriter.print(htmlContent(counter, timestamp, words, matrixAnswers))
+    answerWriter.print(htmlContent(counter, timestamp, words, matrixAnswers, searchName))
     answerWriter.close()
 
     println(s"Word search saved to html/wordsearch-$counter.html")
