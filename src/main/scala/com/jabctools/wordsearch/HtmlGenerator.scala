@@ -7,8 +7,11 @@ object HtmlGenerator {
   private val counterPath = "src/main/resources/counter.txt"
 
   private def createCounterFile(): Unit = {
+    val directory = new File("src/main/resources")
+    if (!directory.exists()) directory.mkdir()
+
     val writer = new PrintWriter(new File(counterPath))
-    writer.print("0")
+    writer.print("1")
     writer.close()
   }
 
@@ -20,7 +23,7 @@ object HtmlGenerator {
       line.toInt
     } else {
       createCounterFile()
-      0
+      1
     }
   }
 
@@ -159,6 +162,9 @@ object HtmlGenerator {
     answerWriter.print(htmlHead(counter))
     answerWriter.print(htmlContent(counter, timestamp, words, matrixAnswers))
     answerWriter.close()
+
+    println(s"Word search saved to html/wordsearch-$counter.html")
+    println(s"Word search answers saved to html/wordsearch-$counter-answers.html")
 
     incrementCounter(counter)
   }

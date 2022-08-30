@@ -79,7 +79,11 @@ object Setup {
     }
   }
 
-  private def validateInput(input: String, size: Int, words: List[String]): List[String] = {
+  private def validateInput(
+      input: String,
+      size: Int,
+      words: List[String]
+  ): List[String] = {
     val errors = ArrayBuffer.empty[String]
 
     if (input.length < 3 || input.length > size)
@@ -90,6 +94,20 @@ object Setup {
 
     if (words.contains(input.toUpperCase))
       errors += "Word already exists"
+
+    words.find(_.contains(input.toUpperCase)) match {
+      case Some(word) =>
+        errors += s"You cannot enter a subset of another word previously entered ($word)"
+      case None => ()
+    }
+
+    val inputContainsSubset = words.foldLeft(List.empty[String]) { (acc, word) =>
+      if (input.toUpperCase.contains(word)) word :: acc else acc
+    }
+
+    if (inputContainsSubset.nonEmpty)
+      errors += s"You have previously entered word(s) " +
+        s"that are subsets of your input: ${inputContainsSubset.mkString(", ")}"
 
     errors.toList
   }
